@@ -16,14 +16,14 @@ var db = connPostgres()
 func main() {
 	e.GET("/", mainPage)
 	e.POST("/", postValue)
-	e.Start(":8080")
+	e.Start(":80")
 
 }
 
 func initRedis() *redis.Client {
 	client := redis.NewClient(
 		&redis.Options{
-			Addr:       "127.0.0.1:6379",
+			Addr:       "redis-server:6379",
 			Password:   "",
 			DB:         0,
 			MaxRetries: 1000,
@@ -32,7 +32,7 @@ func initRedis() *redis.Client {
 }
 
 func connPostgres() *gorm.DB {
-	dsn := "host=0.0.0.0 port=5432 user=postgres password=postgres dbname=database sslmode=disable"
+	dsn := "host=database port=5432 user=postgres password=postgres dbname=database sslmode=disable"
 	//urlExample := "postgres://postgres:postgres@localhost:5432/database"
 	conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
