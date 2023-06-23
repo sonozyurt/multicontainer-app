@@ -38,6 +38,12 @@ func postValue(e echo.Context) error {
 	valueInt, _ := strconv.Atoi(value)
 	fib := calcFib(valueInt)
 	cmd := client.Set(context.Background(), value, fib, 0)
+	dbData := &dbData{GivenNumber: valueInt, CalcNumber: fib}
+
+	if result := db.Where("given_number = ?", valueInt).First(&dbData); result.Error != nil {
+		db.Create(&dbData)
+		data.PostgresResult = append(data.PostgresResult, valueInt)
+	}
 	data.RedisResult = append(data.RedisResult, cmd.String())
 	data.Result = fib
 	return e.Redirect(http.StatusSeeOther, "/")
